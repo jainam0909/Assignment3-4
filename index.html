@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Car Race</title>
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+</style>
 </head>
 <body>
   <h1>Car Race</h1>
@@ -12,7 +23,7 @@
   </div>
 
   <script>
-   //car class defination
+   //car class definition
     class Car {
       constructor(brand, model, year, color, price, gas) {
         this.brand = brand;
@@ -33,7 +44,7 @@
       raceTurn(currentYear) {
         const yearsOld = currentYear - this.year;
         let gasLoss = 5 + yearsOld; 
-        this.gas =this.gas-gasLoss;
+        this.gas = this.gas - gasLoss;
         return this.gas;
       }
     }
@@ -50,14 +61,47 @@
     const raceResults = document.getElementById("car-race-display");
     const cars = [honda, ford, bmw, mazda, audi, kia];
 
+    // Perform race simulation
+    let winner = null;
+    let maxRemainingGas = -1;
+
+    const table = document.createElement("table");
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = "<th>Turn</th>";
+    cars.forEach(car => {
+      const th = document.createElement("th");
+      th.textContent = `${car.brand} ${car.model}`;
+      headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
     for (let i = 1; i <= 7; i++) {
-      const result = document.createElement("div");
-      result.innerHTML = `<h3>Turn ${i}</h3>`;
+      const resultRow = document.createElement("tr");
+      const turnCell = document.createElement("td");
+      turnCell.textContent = `Turn ${i}`;
+      resultRow.appendChild(turnCell);
+
       cars.forEach(car => {
         const remainingGas = car.raceTurn(currentYear);
-        result.innerHTML += `<p>Car Brand: ${car.brand},Car Model: ${car.model},Remaining Gas: ${remainingGas} litres</p>`;
+        const td = document.createElement("td");
+        td.textContent = `${remainingGas} litres`;
+        resultRow.appendChild(td);
+        if (remainingGas > maxRemainingGas) {
+          maxRemainingGas = remainingGas;
+          winner = car;
+        }
       });
-      raceResults.appendChild(result);
+
+      table.appendChild(resultRow);
+    }
+
+    raceResults.appendChild(table);
+
+    // Display winner
+    if (winner) {
+      const winnerDiv = document.createElement("div");
+      winnerDiv.innerHTML = `<h2>Winner: ${winner.brand} ${winner.model} </h2>`;
+      raceResults.appendChild(winnerDiv);
     }
   </script>
 </body>
